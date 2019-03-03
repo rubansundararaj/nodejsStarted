@@ -6,7 +6,7 @@ var {user} = require('./models/user');
 var express = require('express');
 var bodyParser = require('body-parser');
 
-
+const {ObjectID} = require('mongodb');
 
 var app = express();
 app.use(bodyParser.json());
@@ -31,11 +31,49 @@ res.status(400).send(err);
 });
 app.get('/todos',(req, res) =>{
 
-Todo.find({completed:true}).then(to =>{
-  res.send({to});
+Todo.find().then(to =>{
+  res.send({'todo':to});
 }, e=>{
   res.status(400).send(e);
 });
+
+});
+
+app.get('/todos/:id',(req, res) =>{
+
+var tid = req.params.id;
+
+
+if(!ObjectID.isValid(tid)){
+  console.log('Id is not valid');
+  return res.status(400).send();
+}
+else {
+
+
+
+
+Todo.findById({_id:tid}).then(to=>{
+
+if(!to){
+   console.log("ID Not found");
+    return res.status(400).send();
+}
+console.log('using Find by ID: ',to);
+res.send(to);
+res.end();
+},
+err=>{
+console.log("Error in grabing the data");
+  return res.status(400).send();
+
+});
+
+
+}
+
+
+
 
 });
 module.exports = {app};
