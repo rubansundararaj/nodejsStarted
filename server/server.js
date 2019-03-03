@@ -29,3 +29,13 @@ res.status(400).send(err);
 //console.log(req.body);
 
 });
+app.get('/todos',(req, res) =>{
+
+Todo.find({completed:true}).then(to =>{
+  res.send({to});
+}, e=>{
+  res.status(400).send(e);
+});
+
+});
+module.exports = {app};
